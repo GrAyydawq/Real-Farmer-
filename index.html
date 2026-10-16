@@ -1,0 +1,64 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Real Farmer</title>
+<style>
+body{margin:0;font-family:Arial;background:#eaf8df;color:#204b2b;text-align:center}
+header{background:#267b3b;color:white;padding:20px}
+main{max-width:460px;margin:20px auto;padding:12px}
+.card{background:white;border-radius:18px;padding:20px;margin-bottom:16px}
+.tree{font-size:90px;margin:15px}
+button{background:#278642;color:white;border:0;border-radius:12px;padding:14px 22px;font-size:17px}
+button:disabled{background:#8aaa90}
+</style>
+</head>
+<body>
+<header>
+<h1>🌳 Real Farmer</h1>
+<p>Grow your virtual farm!</p>
+</header>
+<main>
+<div class="card">
+<h2>Your first tree</h2>
+<div class="tree" id="tree">🌱</div>
+<p id="status">Your tree is ready to grow!</p>
+<p>🪙 Game coins: <strong id="coins">0</strong></p>
+<p>🌿 Growth: <strong id="growth">0</strong>%</p>
+<button id="water" onclick="waterTree()">💧 Water my tree</button>
+<p id="message">Water once daily to earn 10 game coins.</p>
+</div>
+<div class="card">
+<h3>🎁 Rewards garden</h3>
+<p>Coins are game points, not cash.</p>
+<p>Real rewards will only be offered when funding is available.</p>
+</div>
+</main>
+<script>
+let state={};
+try{state=JSON.parse(localStorage.getItem("realFarmer"))||{}}catch(e){}
+let coins=Number(state.coins)||0;
+let growth=Number(state.growth)||0;
+let last=state.last||"";
+function today(){return new Date().toDateString()}
+function render(){
+document.getElementById("coins").textContent=coins;
+document.getElementById("growth").textContent=growth;
+document.getElementById("tree").textContent=growth>=100?"🌳":growth>=50?"🌲":growth>=20?"🪴":"🌱";
+let done=last===today();
+document.getElementById("water").disabled=done;
+document.getElementById("status").textContent=growth>=100?"Your tree has fully grown!":done?"You watered your tree today!":"Your tree is ready to grow!";
+document.getElementById("message").textContent=done?"Come back tomorrow!":"Water once today for 10 game coins.";
+}
+function waterTree(){
+if(last===today())return;
+coins+=10;growth=Math.min(100,growth+10);last=today();
+try{localStorage.setItem("realFarmer",JSON.stringify({coins,growth,last}))}catch(e){}
+render();
+}
+render();
+</script>
+</body>
+</html>
